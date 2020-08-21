@@ -24,6 +24,16 @@ resource kubernetes_deployment deployment {
         labels = local.labels
       }
       spec {
+        node_selector = var.node_selector
+
+        dynamic "toleration" {
+          for_each = var.tolerations
+          content {
+            key = toleration.value.key
+            value = toleration.value.value
+          }
+        }
+
         container {
           name = "worker"
           image = var.image

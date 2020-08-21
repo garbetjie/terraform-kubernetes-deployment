@@ -24,6 +24,16 @@ variable labels {
   default = {}
 }
 
+variable tolerations {
+  type = list(object({ key = string, value = string }))
+  default = []
+}
+
+variable node_selector {
+  type = map(string)
+  default = {}
+}
+
 variable env {
   type = map(string)
   default = {}
