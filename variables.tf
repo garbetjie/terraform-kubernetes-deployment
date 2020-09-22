@@ -59,9 +59,9 @@ variable wait_for_rollout {
   default = true
 }
 
-variable mount_host_path {
-  type = string
-  default = null
+variable mount_host_paths {
+  type = map(string)
+  default = {}
 }
 
 variable init_containers {
@@ -69,15 +69,21 @@ variable init_containers {
   default = []
 }
 
-variable volumes_from_secrets {
+variable mount_secrets {
   type = list(object({ secret = string, path = string, items = set(string) }))
   default = []
 }
 
 locals {
   labels = merge(var.labels, { deployment = var.name })
-  volumes_from_secrets = {
-    for index, vfs in var.volumes_from_secrets:
-      "${vfs.secret}:${vfs.path}" => vfs
+
+  mount_host_paths = {
+    for key, value in var.mount_host_paths:
+      "hosts-${sha256(key, 0, 4)}" => { host_path = key, mount_path = value }
+  }
+
+  mount_secrets = {
+    for key, value in var.mount_secrets:
+      "secret-${value.secret}" => value
   }
 }
