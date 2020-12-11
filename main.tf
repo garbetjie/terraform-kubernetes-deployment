@@ -45,7 +45,7 @@ resource kubernetes_deployment deployment {
               memory = "${var.memory}Mi"
             }
             requests {
-              cpu = var.cpu
+              cpu = "${var.cpu * 1000}m"
             }
           }
 
