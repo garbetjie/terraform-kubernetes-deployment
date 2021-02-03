@@ -12,6 +12,7 @@ variable image {
 
 variable args {
   type = list(string)
+  default = []
 }
 
 variable replicas {
@@ -65,7 +66,7 @@ variable mount_host_paths {
 }
 
 variable init_containers {
-  type = list(object({ args = list(string), env = map(string) }))
+  type = list(object({ args=list(string), env=map(string), image=string }))
   default = []
 }
 
