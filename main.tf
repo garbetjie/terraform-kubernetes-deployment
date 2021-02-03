@@ -4,7 +4,7 @@ resource kubernetes_deployment deployment {
   metadata {
     namespace = var.namespace
     name = var.name
-    labels = local.labels
+    labels = merge(local.labels, { tf_deployment = var.name })
   }
   spec {
     replicas = var.replicas
@@ -15,13 +15,13 @@ resource kubernetes_deployment deployment {
 
     selector {
       match_labels = {
-        deployment = var.name
+        tf_deployment = var.name
       }
     }
 
     template {
       metadata {
-        labels = local.labels
+        labels = merge(local.labels, { tf_deployment = var.name })
       }
       spec {
         node_selector = var.node_selector
@@ -41,10 +41,10 @@ resource kubernetes_deployment deployment {
           args = var.args
 
           resources {
-            limits {
+            limits = {
               memory = "${var.memory}Mi"
             }
-            requests {
+            requests = {
               cpu = "${var.cpu * 1000}m"
             }
           }
@@ -89,6 +89,7 @@ resource kubernetes_deployment deployment {
           content {
             name = "init-${init_container.key}"
             args = init_container.value.args
+            image = init_container.value.image
 
             dynamic "env" {
               for_each = init_container.value.env
